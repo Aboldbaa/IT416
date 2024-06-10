@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+{% load mathfilters %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Invoice</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+</head>
+<body>
+
+<style>
+    #toggle-content{
+        display:none;
+        }
+    #BillingInfoDisplay:checked ~ #toggle-content{
+          display:block;
+          height:100px;
+         
+        }
+        /* link buttons */ 
+        .link-button_Delete {
+            display: inline-block;
+            padding: 5px 10px; 
+            background-color: #9b2803;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px; 
+            box-shadow: 1px 3px #000000;
+        }
+
+        .link-button_Delete:hover {
+            background-color: #c10700;
+            color: white;
+            box-shadow: 1px 3px #000000;
+        }
+        .redBackground{
+            background-color: red;  
+        }
+        .select2-results { color: #000000; }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<a href="{% url 'invoice_delete' invoice.id %}" 
+    class="link-button_Delete" style = 'float: right;' 
+    onclick="return confirm('Are You Sure You Would Like To Delete This Invoice?')">Delete Invoice</a>
+
+    <div style 'display: inline-block;'>
+        <div style = 'display: inline-block; width:50%;'>
+            <h1>Edit Invoice {{ invoice.id }}</h1>
+        </div>
+        <div style = 'display: inline-block; width:50%;'>
+        </div>
+    </div>
+    {% if source_page == 'calendar' %}
+    <div>
+        <a href="{% url 'calendar' %}"  class="link-button"> Back to Calendar</a>
+    </div>
+    {% endif %}
+    <br> 
+    {% if messages %}
+    <script type="text/javascript">
+    var messages = [
+        {% for message in messages %}
+        {"level": "{{ message.level_tag }}", "text": "{{ message|escapejs }}" }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    </script>
+    {% endif %}
+    <br> 
+    <form method="POST">
+        {% csrf_token %}
+        <br><br><br>
+        <div style = 'display: grid; grid-template-columns: 60% 40%;'>
+            <div style='padding-right: 50px;'>
+                <h2> Edit Client Information </h2>
+                {{Invoice_Form.client.label}}: {{Invoice_Form.client}} <br> <br>
+                {{Invoice_Form.status.label}}: {{Invoice_Form.status}} <br><br>
+                {{Invoice_Form.date.label}}: {{Invoice_Form.date}} <br><br>
+            </div>
+            <div style = 'padding-right: 30px;'>
+                <h2> Current Client Information </h2>
+                {%for i in ClientInfo%}
+                {%if i.id == Invoice_Form.client.value%}
+                <table >
+                    <tbody>
+                        <tr> 
+                            <td>Client Name:</td>
+                            <td>{{i.FName}} {{i.LName}}</td>
+                        </tr>
+                        <tr> 
+                            <td>Street Address:</td>
+                            <td>{{i.address_street}}</td>
+                        </tr>
+                        <tr> 
+                            <td>City::</td>
+                            <td>{{i.address_city}}</td>
+                        </tr>
+                        <tr> 
+                            <td>State:</td>
+                            <td>{{i.address_state}}</td>
+                        </tr>
+                        <tr> 
+                            <td>Zip:</td>
+                            <td>{{i.address_zip}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                {%endif%}
+            {%endfor%}
+            </div>
+        </div>
+
+
+        <p style = 'font-size: 14px;'><i>Leave Job and Billing Information blank if same as Client Information</i></p>
+        <button type="button" onclick="toggleDiv()">Job Information</button>
+        <button type="button" onclick="toggleDiv1()">Billing Information</button>
+
+        <div style = 'display: flex; grid-gap: 20px;'>
+            <div>
+                
+                <div id="ShippingInfoDiv" style="display: none;">
+                    <p>Job Information</p>
+                    <!--{{Invoice_Form.ship_to_name.label}}--> Job POC: {{Invoice_Form.ship_to_name}} <br>
+                    <!--{{Invoice_Form.ship_to_address.label}}-->Job Address: {{Invoice_Form.ship_to_address}} <br>
+                    <!--{{Invoice_Form.ship_to_city.label}}-->Job City: {{Invoice_Form.ship_to_city}} <br>
+                    <!--{{Invoice_Form.ship_to_state.label}}-->Job State: {{Invoice_Form.ship_to_state}} <br>
+                    <!--{{Invoice_Form.ship_to_zip.label}}-->Job Zip Code: {{Invoice_Form.ship_to_zip}} <br>
+                </div>
+            </div>
+            <div>
+
+                <div id="BillingInfoDiv" style="display: none;">
+                    <p>Billing Information</p>
+                    {{Invoice_Form.bill_to_name.label}}: {{Invoice_Form.bill_to_name}} <br>
+                    {{Invoice_Form.bill_to_address.label}}: {{Invoice_Form.bill_to_address}} <br>
+                    {{Invoice_Form.bill_to_city.label}}: {{Invoice_Form.bill_to_city}} <br>
+                    {{Invoice_Form.bill_to_state.label}}: {{Invoice_Form.bill_to_state}} <br>
+                    {{Invoice_Form.bill_to_zip.label}}: {{Invoice_Form.bill_to_zip}} <br>
+                </div>
+            </div>
+        </div>
+
+        <h3>Line Items</h3>
+        <fieldset>
+            <legend>
+                <button type="button" id="add-more">Add a Line Item</button> 
+            </legend>
+            <table id="table">
+                <thead>
+                    <tr>
+                        <td>Material</td>
+                        <td>Quantity</td>
+                        <td>Markup</td>
+                        <td>Delete</td>
+                    </tr>
+                </thead>
+
+                <tbody id="formset-container">                
+                {{ Line_Item_Formset.management_form }}
+                    {% for form in Line_Item_Formset %}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                    <tr class="inline-form">
+                        {% for field in form.visible_fields %}
+                            {% if field.errors %}
+                                {{ field.errors }}
+                            {% endif %}
+                            <td>
+                                {{ field }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <input type="submit" value="Update Invoice" style = 'float: right;'>
+        </fieldset>
+
+
+    </form>
+    <br><br><br><br>
+    <div style="display: flex; justify-content: right;"> 
+        <a href="{% url 'InvoiceFinalize' invoice.id %}" class="link-button">Finalize Invoice for Invoice ID: {{invoice.id}} </a> 
+    </div>
+</body>
+
+
+
+
+
+
+
+<script>
+    $( function() {
+        $( "#datepicker" ).datepicker();
+      } );
+    $(document).ready(function() {
+        $('.MaterialSelection').select2();
+        $('.ClientSelect').select2();
+
+    });
+    document.getElementById('add-more').addEventListener('click', function() {
+        $('.MaterialSelection').select2("destroy");
+            var totalForms = document.getElementById('id_invoicematerial_set-TOTAL_FORMS');//make sure to check for this(ctr+u) when doing dynamic stuff. sometimes the div id is a diff name
+            console.log(totalForms); 
+            var formNum = totalForms.value;
+            var newForm = document.querySelector('.inline-form').cloneNode(true);
+            newForm.innerHTML = newForm.innerHTML.replace(/-0-/g, '-' + formNum + '-');
+            document.getElementById('formset-container').appendChild(newForm);
+            totalForms.value = parseInt(formNum) + 1;
+        $('.MaterialSelection').select2();
+        })
+    console.log(document.querySelectorAll('[id$="-DELETE"]'))
+    document.querySelectorAll('[id$="-DELETE"]').addEventListener('click', function() {
+        console.log('clicked');
+    });
+
+</script>
+
+
+<script>
+    function toggleDiv() {
+        var div = document.getElementById("ShippingInfoDiv");
+        if (div.style.display === "none") {
+            div.style.display = "block"; // Show the div
+        } else {
+            div.style.display = "none"; // Hide the div
+        }
+    }
+</script>
+
+<script>
+    function toggleDiv1() {
+        var div = document.getElementById("BillingInfoDiv");
+        if (div.style.display === "none") {
+            div.style.display = "block"; // Show the div
+        } else {
+            div.style.display = "none"; // Hide the div
+        }
+    }
+</script>
+<script type="text/javascript">
+    window.onload = function() {
+        if (typeof messages !== 'undefined' && messages.length > 0) {
+            // Display the first message's text in an alert box
+            alert(messages[0].text);
+        }
+    };
+</script>
+
+</html>
+{%endblock%}

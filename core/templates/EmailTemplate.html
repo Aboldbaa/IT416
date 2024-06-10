@@ -1,0 +1,179 @@
+{% block content %}
+<html>
+<head>
+    <title>Invoice #{{invoice_id}} {{ bill_to_name }}</title>
+    <style>
+
+        .logo_img {
+            width: 150px;
+            height: 150px;
+        }
+
+
+
+        th{
+            padding-bottom: 5px;
+        }
+
+        tbody{
+            text-align: center;
+        }
+
+        
+        td{
+            padding-bottom: 3px;
+        }
+
+
+
+        .header_left {
+            display: inline-block;
+            width: 170pt;
+            text-align: center;
+            border: 1px solid black;
+        }
+        .header_center {
+            font-size: 18pt;
+            padding-top: 40pt;
+            text-align: center; 
+        }
+
+        .header_contact{
+            font-size: 10pt;
+            margin-bottom: 0; 
+            padding-top: -10pt;
+            
+        }
+
+        .container{
+            width: 600px; border: 1px black solid; text-align: center;
+        }
+
+
+        
+    </style>
+</head>
+    <body>
+        <!-- Begin Header Things -->
+        <div>
+            <div>
+                <div class = 'container'> 
+                    <div style = 'display: inline-block; width: 295px;'>
+                        <p>C.T. Harris Electrical Services</p>
+                        <p style = 'padding-top: -20pt; font-style: italic; font-size: 14pt;'>Invoice</p>
+                    </div>
+
+                    <div style = 'display: inline-block; width: 295px; '>
+                        <p style = 'padding-top: 20pt;'>{{Static_User_Info.ship_to_address}}</p>
+                        <p>{{Static_User_Info.ship_to_city}}, {{Static_User_Info.ship_to_state}} {{Static_User_Info.ship_to_zip}}</p>
+                        <p>{{Static_User_Info.ship_to_name}}</p>
+                        <p>ctharriselectrical.com</p>
+                    </div>
+                </div>
+                <!-- End Header Things -->
+
+
+                <br>
+
+                
+                <!-- Begin Client Info -->
+                <div class = 'container'> 
+                    <div style = 'width: 195px; display: inline-block; 1px black solid;'>
+                        <h3>Bill To</h3>
+                        <p>{{bill_to_name}}</p>
+                        <p>{{bill_to_address}}</p>
+                        <p>{{bill_to_city}}, {{bill_to_state}} {{bill_to_zip}}</p>
+                        <p>United States</p>
+                    </div>
+
+                    <div style = 'width: 195px; display: inline-block; 1px black solid;'>
+                        <h3>Ship To</h3>
+                        <p>{{ ship_to_name }}</p>
+                        <p>{{ ship_to_address }}</p>
+                        <p>{{ ship_to_city }}, {{ ship_to_state }} {{ship_to_zip}} </p>
+                        <p>United States</p>
+                    </div>
+                    <div style = 'width: 195px; display: inline-block; 1px black solid;'>
+                        <h3>Invoice Details</h3>
+                        <p>Invoice # {{ invoice_id }}</p>
+                        <p>Invoice Date: {{ date }}</p>
+                        <p>Terms: {{Static_User_Info.invoice_terms}}</p>
+                    </div>
+                </div>
+                <!-- Emd Client Info -->
+            </div>
+
+
+
+            <div class = 'container'>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width = '30%'>Item</th>
+                            <th width = '40%'>Description</th>
+                            <th width = '7%'>Quantity</th>
+                            <th width = '7%'>Price</th>
+                            <th width = '16%'>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in Item_Dict.items%}
+                            
+                            <tr>
+                                <td> {{key}} </td>
+                                <td> {{value.description}} </td>
+                                <td> {{value.quantity}} </td>
+                                <td> {{value.price}} </td>
+                                <td> {{value.total}} </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!--End Invoice Data (Line Items)-->
+
+
+            <!-- Begin Invoice Total-->
+            <div class = 'container'>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width = '75%'></th>
+                            <th width = '25%'></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                            <td></td>
+                            <td>Subtotal: {{subtotal}}</td>
+                            
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Tax: {{tax}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Total: {{total}}</td>
+                            
+                            
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- End Invoice Total-->
+
+
+            <div class = 'container'>
+                <p style = 'padding-left:10px; padding-top:10px;'>We appreciate your business and look forward to working with you again.</p>
+                <p> A PDF Version of Your Invoice is Attached to this Email.</p>
+            </div>
+
+        </div>
+    </body>
+</html>
+
+
+{% endblock %}

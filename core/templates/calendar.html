@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white; 
+            border: 1px solid rgb(5, 49, 77);
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+            font-size: 14px;
+            width: 14.28%; /* 100% divided by 7 days */
+            vertical-align: top; /* Ensure content starts from the top */
+            border: 1px solid rgb(5, 49, 77);
+            color: black; 
+        }
+
+        td {
+            min-height: 100px; /* Minimum height for each cell */
+            max-height: 200px; /* Maximum height before scrolling */
+            overflow-y: auto; /* Allows scrolling within the cell */
+        }
+
+        th {
+            text-align: center;
+            background-color: rgb(5, 49, 77);
+            color: white;
+        }
+        
+        .tooltiptext {
+            display: none;
+            width: auto;
+            max-width: 250px;
+            background-color: #f1f1f1;
+            color: black;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            top: calc(100% + 5px); /* Position the tooltip below the link */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip{
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <a href="{% url 'calendar' %}"  class="New_Button" style="float: right;">Current Month</a>
+    <h1>
+        {% if current_month == 1 %}January
+        {% elif current_month == 2 %}February
+        {% elif current_month == 3 %}March
+        {% elif current_month == 4 %}April
+        {% elif current_month == 5 %}May
+        {% elif current_month == 6 %}June
+        {% elif current_month == 7 %}July
+        {% elif current_month == 8 %}August
+        {% elif current_month == 9 %}September
+        {% elif current_month == 10 %}October
+        {% elif current_month == 11 %}November
+        {% elif current_month == 12 %}December
+        {% endif %}
+        {{ current_year }}
+      </h1> 
+    
+    <br>
+    <br>
+    <a href="{{ previous_month_url }}" class="New_Button">Previous Month</a>
+    
+    <!-- Link to the next month -->
+    <a href="{{ next_month_url }}"  class="New_Button" style="float: right;">Next Month</a>
+    <p> </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in month_calendar %}
+                <tr>
+                    {% for day in week %}
+                    <td>
+                        {% if day.date.month == current_month %}
+                            {{ day.date.day }}<br>
+                            <div class="invoices-list">
+                                {% for invoice in day.invoices %}
+                                <br>
+                                    <div class="invoice-entry">
+                                        {% with address=invoice.client.address_street|stringformat:"s" %}
+                                        {% with city=invoice.client.address_city|stringformat:"s" %}
+                                        {% with state=invoice.client.address_state|stringformat:"s" %}
+                                        {% with zip=invoice.client.address_zip|stringformat:"s" %}
+                                        {% with address_string=address|add:", "|add:city|add:", "|add:state|add:" "|add:zip %}
+                                        <div class="tooltip">
+                                            <a href="{% url 'invoice_edit' invoice.id %}?source=calendar" title="Click to edit"><button style = 'width=100%;'>{{ invoice.client.FName }}</button></a>
+                                            <span class="tooltiptext">
+                                                POC: {{ invoice.client.contact_name }}<br>
+                                                Phone: {{ invoice.client.phone_number }}<br>
+                                                Email: {{ invoice.client.email }}<br>
+                                                Address: {{ address_string }}
+                                            </span>
+                                        </div>
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                    </div>
+                                {% empty %}
+                                    <!-- Optional: Message or icon indicating no invoices for this day -->
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            &nbsp; <!-- Leave the cell blank for days not in the current month -->
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+<script>
+    $(document).ready(function() {
+        // Event Mouseover function
+        $('td').on('mouseover', '.tooltip', function(e) {
+            var tooltipContent = $(this).find('.tooltiptext').html(); // Get the content of the tooltip
+            var tooltip = '<div class="tooltipevent" style="background:#f1f1f1; border: 1px solid black; border-radius: 6px; padding: 5px; position:absolute; z-index:10001; color: black;">' + tooltipContent + '</div>';
+            
+            // Append tooltip to the body
+            $('body').append(tooltip);
+            
+            // Position tooltip
+            var tooltipWidth = $('.tooltipevent').outerWidth();
+            var tooltipHeight = $('.tooltipevent').outerHeight();
+            $('.tooltipevent').css({
+                top: $(this).offset().top + $(this).outerHeight() + 5, // Position the tooltip below the hyperlink
+                left: $(this).offset().left + ($(this).outerWidth() - tooltipWidth) / 2 // Position the tooltip centered horizontally with respect to the hyperlink
+            }).fadeIn('500');
+        });
+
+        // Event Mouseout function
+        $('td').on('mouseout', '.tooltip', function() {
+            $('.tooltipevent').remove(); // Remove the tooltip from the body
+        });
+    });
+</script>
+
+
+{% endblock %}

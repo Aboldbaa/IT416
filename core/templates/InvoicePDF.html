@@ -1,0 +1,299 @@
+{% block content %}
+<html>
+<head>
+    <title>Invoice #{{invoice_id}} {{ bill_to_name }}</title>
+    <style>
+
+
+
+
+        @page {
+            size: letter portrait;
+ 
+        
+
+
+
+            /* Business Info Frames */
+            @frame header-frame_left {
+
+                -pdf-frame-content: header_image;
+                left: 20pt; width: 130pt; top: 20pt; height: 120pt;
+            }
+            @frame header-frame_title {
+
+                -pdf-frame-content: header_title;
+                left: 180pt; width: 250pt; top: 20pt; height: 120pt;
+            }
+            @frame header-contact-frame {
+                
+                -pdf-frame-content: header_contact;
+                left: 460pt; width: 132pt; top: 20pt; height: 120pt;
+            }
+
+
+        /* Client Contact Frames */
+            @frame header-invoice_BillTo-frame {
+
+                -pdf-frame-content: header_BillTo;
+                left: 20pt; width: 211pt; top: 150pt; height: 120pt;
+            }
+
+            @frame header-invoice_ShipTo-frame {
+
+                -pdf-frame-content: header_ShipTo;
+                left: 231pt; width: 211pt; top: 150pt; height: 120pt;
+            }
+
+            @frame header-invoice_Data-frame {
+
+                -pdf-frame-content: header_InvoiceData;
+                left:442pt; width: 150pt; top: 150pt; height: 120pt;
+            }
+
+
+
+
+            /* Dynamic Invoice Frames */
+            @frame content_frame {
+
+                left:20pt; width: 572; top: 280pt; height: 420pt;
+            }
+        
+
+
+
+        /* Footer */
+            @frame content-footer-frame {
+
+                -pdf-frame-content: footer_content;
+                left: 20pt; width: 572pt; top: 700pt; height: 50pt;
+            }
+
+        }
+
+
+
+        @page Standard{
+            size: letter portrait;
+
+
+            /* Business Info Frames */
+            @frame header-frame_left {
+
+                -pdf-frame-content: header_image;
+                left: 20pt; width: 130pt; top: 20pt; height: 120pt;
+            }
+            @frame header-frame_title {
+
+                -pdf-frame-content: header_title;
+                left: 180pt; width: 250pt; top: 20pt; height: 120pt;
+            }
+            @frame header-contact-frame {
+
+                -pdf-frame-content: header_contact;
+                left: 460pt; width: 132pt; top: 20pt; height: 120pt;
+            }
+
+
+
+
+            /* Dynamic Invoice Frames */
+            @frame content_frame {
+
+                left:20pt; width: 572; top: 150pt; height: 550pt;
+            }
+
+        
+
+
+
+        /* Footer */
+            @frame content-footer-frame {
+
+                -pdf-frame-content: footer_content;
+                left: 20pt; width: 572pt; top: 700pt; height: 50pt;
+            }
+        }
+
+
+        .logo_img {
+            width: 150px;
+            height: 150px;
+        }
+
+
+
+        th{
+            padding-bottom: 5px;
+        }
+
+        tbody{
+            text-align: center;
+        }
+
+        
+        td{
+            padding-bottom: 3px;
+        }
+
+
+
+        .header_left {
+            display: inline-block;
+            width: 170pt;
+            text-align: center;
+            border: 1px solid black;
+        }
+        .header_center {
+            font-size: 18pt;
+            padding-top: 40pt;
+            text-align: center; 
+        }
+
+        .header_contact{
+            font-size: 10pt;
+            margin-bottom: 0; 
+            padding-top: -10pt;
+            
+        }
+
+
+        
+    </style>
+</head>
+    <body>
+        <!-- Begin Header Things -->
+        <div id = 'header_container'>
+            <div> 
+                <div id='header_image'>
+                    <img src="core\static\C.T. Harris Logo.png" class="logo_img">
+                </div>
+
+                <div id='header_title' class = 'header_center'>
+                    <p>C.T. Harris Electrical Services</p>
+                    <p style = 'padding-top: -20pt; font-style: italic; font-size: 14pt;'>Invoice</p>
+                </div>
+
+                <div id='header_contact' class = 'header_contact'>
+                    <p style = 'padding-top: 20pt;'>{{Static_User_Info.ship_to_address}}</p>
+                    <p>{{Static_User_Info.ship_to_city}}, {{Static_User_Info.ship_to_state}} {{Static_User_Info.ship_to_zip}}</p>
+                    <p>{{Static_User_Info.ship_to_name}}</p>
+                    <p>{{Static_User_Info.email_address}}</p>
+                    <p>ctharriselectrical.com</p>
+                </div>
+            </div>
+            <!-- End Header Things -->
+
+
+            <br>
+
+            
+            <!-- Begin Client Info -->
+            <div> 
+                <div id='header_BillTo'>
+                    <h3>Bill To</h3>
+                    <p>{{bill_to_name}}</p>
+                    <p>{{bill_to_address}}</p>
+                    <p>{{bill_to_city}}, {{bill_to_state}} {{bill_to_zip}}</p>
+                    <p>United States</p>
+                </div>
+
+                <div id='header_ShipTo'>
+                    <h3>Ship To</h3>
+                    <p>{{ ship_to_name }}</p>
+                    <p>{{ ship_to_address }}</p>
+                    <p>{{ ship_to_city }}, {{ ship_to_state }} {{ship_to_zip}} </p>
+                    <p>United States</p>
+                </div>
+                <div id='header_InvoiceData'>
+                    <p>Invoice # {{ invoice_id }}</p>
+                    <p>Invoice Date: {{ date }}</p>
+                    <p>Terms: {{Static_User_Info.invoice_terms}}</p>
+                </div>
+            </div>
+            <!-- Emd Client Info -->
+        </div>
+        <div id = 'footer_content'>
+            <p style = 'padding-left:10px; padding-top:10px;'>Thank you for your business. We appreciate your business and look forward to working with you again.</p>
+            <p style = 'text-align: right; padding-right:10px;'>page <pdf:pagenumber> of <pdf:pagecount></p>
+        </div>
+        
+        <!-- Begin Invoice Data (Line Items)-->
+        <pdf:nexttemplate name="Standard" />
+
+        <table>
+            <thead>
+                <tr>
+                    <th width = '30%'>Item</th>
+                    <th width = '40%'>Description</th>
+                    <th width = '7%'>Quantity</th>
+                    <th width = '7%'>Price</th>
+                    <th width = '16%'>Total</th>
+                </tr>
+            </thead>
+            <!--<tbody>
+                {% for item in line_items%}
+                <tr>
+                    <td> {{item.material.item}} </td>
+                    <td> {{item.material.description}} </td>
+                    <td> {{item.quantity}} </td>
+                    <td> {{item.material.price}} </td>
+                    <td> need total </td>
+                </tr>
+                {% endfor %}
+            </tbody>!-->
+            <tbody>
+                {% for key, value in Item_Dict.items%}
+                    
+                    <tr>
+                        <td> {{key}} </td>
+                        <td> {{value.description}} </td>
+                        <td> {{value.quantity}} </td>
+                        <td> {{value.price}} </td>
+                        <td> {{value.total}} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!--End Invoice Data (Line Items)-->
+
+
+        <!-- Begin Invoice Total-->
+        <table>
+            <thead>
+                <tr>
+                    <th width = '75%'></th>
+                    <th width = '25%'></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr></tr>
+                <tr></tr>
+                <tr>
+                    <td></td>
+                    <td>Subtotal: {{subtotal}}</td>
+                    
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Taxes and Fees: {{tax}}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Total: {{total}}</td>
+                    
+                </tr>
+            </tfoot>
+        </table>
+        <!-- End Invoice Total-->
+
+
+
+
+    
+    </body>
+</html>
+
+
+{% endblock %}

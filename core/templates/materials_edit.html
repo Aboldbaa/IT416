@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Edit Material</h1>
+        <a href="{% url 'materials_list' %}" class="New_Button"> Back to Materials</a>
+        <br> 
+        <br> 
+        <form id="material-form" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="material_id" value="{{ material.id }}">
+            <table>
+                <tr>
+                    <td><label for="item">Item:</label></td>
+                    <td><input type="text" name="item" value="{{ material.item }}"></td>
+                </tr>
+                <tr>
+                    <td><label for="description">Description:</label></td>
+                    <td><input type="text" name="description" value="{{ material.description }}"></td>
+                </tr>
+                <tr>
+                    <td><label for="price">Price:</label></td>
+                    <td><input type="text" name="price" value="{{ material.price }}"></td>
+                </tr>
+            </table>
+            <br> 
+            <br> 
+            <button type="submit" name="update" onclick="return confirm('Are you sure you want to make these changes?')">Update</button>
+            <button type="submit" name="delete" id="delete-button">Delete</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('delete-button').addEventListener('click', function(event) {
+            if (!confirm('Are you sure you want to delete {{ material.item }}?')) {
+                event.preventDefault();
+            } else {
+                document.getElementById('material-form').setAttribute('delete-clicked', 'true');
+            }
+        });
+
+        document.getElementById('material-form').addEventListener('submit', function(event) {
+            var deleteClicked = this.getAttribute('delete-clicked');
+            if (deleteClicked === 'true') {
+                var itemName = document.getElementsByName('item')[0].value;
+                alert(itemName + ' has been deleted.');
+            }
+        });
+    </script>
+{% endblock %}

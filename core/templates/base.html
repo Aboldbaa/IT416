@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title> C.T. Harris Electrical Work Site</title>
+    <style>
+        .header {
+            /*background-color: rgb(05,49,77);*/
+            background-color:  #0F405C; 
+            color: #fff;
+            padding: 10px;
+            margin-left: 220px;
+        }
+        
+        .side-menu {
+           /* background-color: rgb(05,49,77);*/
+            background-color:  #0F405C; 
+            color: white; 
+            padding: 10px;
+            width: 200px;
+            height: 100%;
+            position: fixed;
+            left: 0;
+            top: 0;
+            text-align:center;
+            padding-top: 5%;
+        }
+        
+        .side-menu ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .side-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .side-menu a {
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .content {
+            margin-left: 220px; /* Adjust this value to make space for the side menu */
+            padding: 20px;
+        }
+        body {
+            /*background-color: rgb(08,82,128);*/
+            background-color:  #0C5C8E; 
+            color: white; 
+            font-family: sans-serif;
+        }
+        h1 {
+            color: white; 
+            font-size: 30px; 
+            font-weight: bold; 
+            text-align: center; 
+            font-family: sans-serif; 
+        }
+        .container {
+            position: relative; 
+            margin-bottom: 20px; 
+        }
+        .search-form {
+            position: absolute; 
+            top:0; 
+            right: 0; 
+            margin: 10px;
+        }
+        .center {
+            text-align: center; 
+        }
+        table {
+            border-collapse: collapse;
+            width:100%; 
+            background-color:rgb(05,49,77);
+            border: 1px solid white; 
+        }
+        th,td{
+            padding: 14px; 
+            text-align: left; 
+            border-bottom: 1px solid white;
+            font-size: 14px; 
+        }
+        th{
+            text-align: center; 
+        }
+        select {
+            padding: 5px; 
+            border: none; 
+            margin-right: 2px; 
+            background-color: white; 
+        }
+        select::-ms-expand{
+            color: rgb(08,82,128); 
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+        }
+        a.NavBar:link {
+            color: white; 
+            background-color: transparent; 
+        }
+        a.NavBar:visited {
+            color: white; 
+            background-color: transparent; 
+        }
+        
+
+        .hr{
+            border-bottom: 1px dashed black;
+        }
+
+        
+
+        .Option_Button {
+            background-color: White;
+            padding: 5px;
+            color: black;
+            border-radius: 8px;
+            font-size: 90%;
+            box-shadow: 1px 3px #000000;
+        }
+
+        .Option_Button:hover {
+            background-color: #f1f1f1;
+            box-shadow: 3px 5px #000000;
+        }
+
+        .New_Button {
+            background-color: White;
+            padding: 3px;
+            color: black;
+            border-radius: 6px;
+            font-size: 90%;
+            box-shadow: 1px 3px #000000;
+        }
+
+        .New_Button:hover {
+            background-color: #f1f1f1;
+            box-shadow: 1px 3px #000000;
+        }
+        /* link buttons */ 
+        .link-button {
+            display: inline-block;
+            padding: 5px 10px; 
+            background-color: #f0f0f0; 
+            color: #000; 
+            text-decoration: none;
+            border-radius: 4px; 
+            box-shadow: 1px 3px #000000;
+        }
+
+        .link-button:hover {
+            background-color: #ddd; 
+            box-shadow: 1px 3px #000000;
+        }
+
+
+        .button{
+            background-color: rgb(08,82,128);
+            font-size: 100%;
+            padding: 15px;
+            color: white;
+            border-radius: 8px;
+        }
+
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+          
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            align-content: center;
+            text-align: center;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+          
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+          
+        .dropdown-content a:hover {background-color: #ddd;}
+          
+        .dropdown:hover .dropdown-content {display: block;}
+          
+        .dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>C.T. Harris Electrical Work Site </h1>
+    </div>
+    <div class="side-menu">
+        <a href="{% url 'index' %}">
+            <img src="{% static 'C.T. Harris Logo White.png' %}" alt="C.T. Harris Logo" style="max-width: 150px;">
+            
+        </a>
+        <ul> 
+            <li>
+                <a href="{% url 'UserInfo' %}" class='NavBar'><button class='button'>Admin</button></a>
+            </li>
+            <br><br>
+            <li><a href="{% url 'index' %}" class='NavBar'>Home</a></li>
+            <li><a href="{% url 'client_list' %}" class='NavBar'>Clients</a></li>
+
+            <li> 
+                <div class='dropdown'>
+                    <a href="{% url 'invoice_page' %}" class='NavBar'><button class='button'>Invoices</button></a>
+                    <div class='dropdown-content'>
+                        <!-- figure out a way to integrate new "create invoice" form-->
+                        <a href="{% url 'new_invoice' %}?status=Proposal">Add New Proposals</a>
+                        <a href="{% url 'new_invoice' %}?status=Open">Add New Invoice</a>
+                    </div>
+                </div>
+                
+
+            </li>
+
+            <li><a href="{% url 'calendar' %}" class='NavBar'>Calendar</a></li>
+            <li><a href="{% url 'materials_list' %}" class='NavBar'>Materials</a></li>        
+        </ul>
+
+    </div>
+        
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

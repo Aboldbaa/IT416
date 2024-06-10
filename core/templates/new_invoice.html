@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% block content %}
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Invoice Form</title>
+        {% if messages %}
+        <script type="text/javascript">
+        var messages = [
+            {% for message in messages %}
+            {"level": "{{ message.level_tag }}", "text": "{{ message|escapejs }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+        </script>
+        {% endif %}
+        
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+        
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    </head>
+    
+    <body>
+        <h1>New {{ title }}</h1>
+    </body>
+    <a href="{% url 'invoice_page' %}" class="New_Button"> Back to Invoice</a>
+    <br> 
+    <br>
+    <style>
+        .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto;
+        background-color: rgb(0,0,0); 
+        background-color: rgba(0,0,0,0.4); 
+        }
+        
+
+        .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; 
+        }
+        
+        .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+        }
+
+        .modal_header{
+            background-color: rgb(05, 49, 77);
+            padding: 2px 15px;
+            text-align:center;
+        }
+        .select2-results { color: #000000; }
+
+        #ShippingInfoDiv{
+            display: none;
+        }
+
+        #BillingInfoDiv{
+            display: none;
+            
+        }
+
+
+    </style>
+
+
+
+    <div>
+        <button id= 'OpenModal_NewCustomer'><h3>Add New Client</h3></button>
+        
+        <button id= 'OpenModal_NewMaterial' style = 'margin-left: 40px;'><h3>Add New Material</h3></button>
+    </div>
+    <div id = 'New_Customer_Modal' class = 'modal'>
+        <div class='modal-content'>
+            <div class = 'modal_header'>
+                <span class="close">&times;</span>
+                <h2>Add New Client</h2>
+            </div>
+            <di class = 'modal_body'>
+                <form method="post" style="color:black;">
+                    {% csrf_token %}
+                    {{ NewCustomer.as_p }}
+                    
+                    <input type="submit" value="Add">
+                </form>
+            </div>
+    </div>
+
+    <div id = 'New_Material_Modal' class = 'modal'>
+        <div class='modal-content'>
+            <div class = 'modal_header'>
+                <span class="close">&times;</span>
+                <h2>Add New Material</h2>
+            </div>
+            <di class = 'modal_body'>
+                <form method="post" style="color:black;">
+                    {% csrf_token %}
+                    {{ NewMaterial.as_p }}
+                    
+                    <input type="submit" value="Add">
+                </form>
+            </div>
+    </div>
+
+
+    <form method="post">
+        {% csrf_token %}
+        <br><br><br>
+        {{Invoice_Form.client.label}}: {{Invoice_Form.client}} <br> <br>
+        {{Invoice_Form.status.label}}: {{Invoice_Form.status}} <br><br>
+        {{Invoice_Form.date.label}}: {{Invoice_Form.date}} <br><br>
+
+        
+
+        <p style = 'font-size: 14px;'><i>Leave Shipping and Billing Information blank if same as Client Information</i></p>
+        <button type="button" onclick="toggleDiv()">Shipping Information</button>
+        <button type="button" onclick="toggleDiv1()">Billing Information</button>
+
+        <div style = 'display: flex; grid-gap: 20px;'>
+            <div>
+                
+                <div id="ShippingInfoDiv" style="display: none;">
+                    <p>Shipping Information</p>
+                    {{Invoice_Form.ship_to_name.label}}: {{Invoice_Form.ship_to_name}} <br>
+                    {{Invoice_Form.ship_to_address.label}}: {{Invoice_Form.ship_to_address}} <br>
+                    {{Invoice_Form.ship_to_city.label}}: {{Invoice_Form.ship_to_city}} <br>
+                    {{Invoice_Form.ship_to_state.label}}: {{Invoice_Form.ship_to_state}} <br>
+                    {{Invoice_Form.ship_to_zip.label}}: {{Invoice_Form.ship_to_zip}} <br>
+                </div>
+            </div>
+            <div>
+
+                <div id="BillingInfoDiv" style="display: none;">
+                    <p>Billing Information</p>
+                    {{Invoice_Form.bill_to_name.label}}: {{Invoice_Form.bill_to_name}} <br>
+                    {{Invoice_Form.bill_to_address.label}}: {{Invoice_Form.bill_to_address}} <br>
+                    {{Invoice_Form.bill_to_city.label}}: {{Invoice_Form.bill_to_city}} <br>
+                    {{Invoice_Form.bill_to_state.label}}: {{Invoice_Form.bill_to_state}} <br>
+                    {{Invoice_Form.bill_to_zip.label}}: {{Invoice_Form.bill_to_zip}} <br>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        {% comment %}
+
+            <label class="form-label">{{Invoice_Form.client.label}}</label>
+            <input class="form-select" placeholder="--- Select Client ---" name="clients" type="text" list="clients">
+            <datalist id="clients">
+                {% for i in client_list %}
+                    <option value="{{ i }}">
+                {% endfor %}
+            </datalist>
+            <br>
+            {{Invoice_Form.status}}
+            {{Invoice_Form.date}}
+{% endcomment %}
+
+
+<br><br><br>
+
+
+    <h3>Line Items</h3>
+    <fieldset>
+        <legend>
+            <button type="button" id="add-more">Add a Line Item</button> 
+        </legend>
+        <table id="table">
+            <thead>
+                <tr>
+                    <td>Material</td>
+                    <td>Quantity</td>
+                    <td>Markup</td>
+                    <td>Delete</td>
+                </tr>
+            </thead>
+
+            <tbody id="formset-container">                
+            {{ Invoice_FormSet.management_form }}
+                {% for form in Invoice_FormSet %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                <tr class="inline-form">
+                    {% for field in form.visible_fields %}
+                        {% if field.errors %}
+                            {{ field.errors }}
+                        {% endif %}
+                        <td>
+                            {{ field }}
+                        </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </fieldset>
+    <br>
+    <br>
+    <input type="submit" value="Update Invoice">
+</form>
+
+
+
+    <script>
+        function toggleDiv() {
+            var div = document.getElementById("ShippingInfoDiv");
+            if (div.style.display === "none") {
+                div.style.display = "block"; // Show the div
+            } else {
+                div.style.display = "none"; // Hide the div
+            }
+        }
+    </script>
+
+    <script>
+        function toggleDiv1() {
+            var div = document.getElementById("BillingInfoDiv");
+            if (div.style.display === "none") {
+                div.style.display = "block"; // Show the div
+            } else {
+                div.style.display = "none"; // Hide the div
+            }
+        }
+    </script>
+
+
+
+
+    <script>
+
+        $( function() {
+            $( "#datepicker" ).datepicker();
+          } );
+
+        $(document).ready(function() {
+            $('.ClientSelect').select2();
+        });
+
+        $(document).ready(function() {
+            $('.MaterialSelection').select2();
+        });
+
+
+        document.getElementById('add-more').addEventListener('click', function() {
+            $('.MaterialSelection').select2('destroy');
+                var totalForms = document.getElementById('id_invoicematerial_set-TOTAL_FORMS');//make sure to check for this(ctr+u) when doing dynamic stuff. sometimes the div id is a diff name
+                console.log(totalForms); 
+                var formNum = totalForms.value;
+                var newForm = document.querySelector('.inline-form').cloneNode(true);
+                newForm.innerHTML = newForm.innerHTML.replace(/-0-/g, '-' + formNum + '-');
+                document.getElementById('formset-container').appendChild(newForm);
+                totalForms.value = parseInt(formNum) + 1;
+            $('.MaterialSelection').select2();
+            })
+    </script>
+
+
+
+    <script>
+        var datamap = new Map([
+        [document.getElementById("OpenModal_NewCustomer"), document.getElementById("New_Customer_Modal")],
+        [document.getElementById("OpenModal_NewMaterial"), document.getElementById("New_Material_Modal")],
+    ]);
+    // Get the modal
+
+
+    datamap.forEach((value, key) => {
+        doModal(key, value);
+    });
+
+
+    function doModal(anchor, popupbox) {
+
+        // Get the <span> element that closes the modal
+        var span = popupbox.getElementsByClassName("close")[0];
+
+        anchor.addEventListener("click", function (event) {
+            popupbox.style.display = "block";
+        });
+
+        span.addEventListener("click", function (event) {
+            popupbox.style.display = "none";
+        });
+
+        window.addEventListener("click", function (event) {
+            if (event.target == popupbox) {
+                popupbox.style.display = "none";
+            }
+        });
+    }
+    </script>
+    <br><br><br>
+    <script type="text/javascript">
+        window.onload = function() {
+            if (typeof messages !== 'undefined' && messages.length > 0) {
+                // Display the first message's text in an alert box
+                alert(messages[0].text);
+            }
+        };
+    </script>
+</html>
+{% endblock %}

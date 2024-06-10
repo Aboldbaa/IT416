@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Admin Panel</title>
+    </head>
+    <body>
+        <form method="POST">
+            {% csrf_token %}
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <h3> User Info </h3>
+            {{form.as_p}}
+{% comment %}
+                {{form.ship_to_address}}
+                {{form.ship_to_name}}
+                {{form.ship_to_address.label_tag}}
+                {{form.ship_to_address}}
+                {{form.ship_to_city}}
+                {{form.ship_to_state}}
+                {{form.ship_to_zip}}
+                {{form.email_address}}
+                {{form.phone_number}}
+
+
+            <h3> Inovice Defualt Information</h3>
+            <label for="markup_value">Markup Value: </label>
+            {{form.markup_value}}
+            <br><br>
+{% endcomment %}
+
+            <button type="submit">Update Information</button>
+
+        </form>
+
+
+
+    </body>
+</html>
+{%endblock%}

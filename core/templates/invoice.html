@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Invoices</title>
+        {% if messages %}
+        <script type="text/javascript">
+        var messages = [
+            {% for message in messages %}
+            {"level": "{{ message.level_tag }}", "text": "{{ message|escapejs }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+        </script>
+        {% endif %}
+    </head>
+    <body>
+        <h1>Invoices</h1>
+{% comment %}
+            <form method="post">
+                {% csrf_token %}
+                {{ invoice_form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+{% endcomment %}
+    </body>
+    <br><br><br><br>
+    <div style='display: flex; justify-content: space-around;'>
+        <a href = "{% url 'new_invoice' %}?status=Proposal"><button class='Option_Button' ><h3>Start Proposal</h3></button></a>
+        <a href = "{% url 'new_invoice' %}?status=Open"><button class='Option_Button'><h3>Start Invoice</h3></button></a>    
+    </div>
+    <br><br><br><br>
+
+        <!--Style for the client table-->
+        <style>
+            td{
+                text-align:center;
+                background-color: #f0f0f0;
+                color: #000000;
+    
+                border-bottom: 1px dashed black;
+            }
+            th{
+                border-left: 1px solid white;
+            }
+            .button_OpenInvoice{
+                padding: 15px 15px;
+                font-size: 15px;
+            }
+            
+        </style>
+    
+         <!--Load static files for images-->
+            
+            <!--Display table for all customers in DB-->
+            <form id="invoice-search-form" method="get" action="{% url 'invoice_search' %}">
+                <input type="text" name="search" placeholder="Search...">
+                <button type="submit">Search</button>
+            </form>
+            
+            <br><br><br><br>
+            <h2>Draft</h2>
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Open Invoice</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Contact Name</th>
+                        <th>Phone Number</th>
+                        <th>Street Address</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Zip Code</th>
+                        <th>Actions<br><br><i>Change to Proposal</i></th>
+                    </tr>
+                </thead>     
+                         
+                <tbody>
+                    {% for invoice in invoices %}
+                    {% if invoice.status == 'Draft' %}
+                        <tr class = 'invoice-row' id = '{{invoice.id}}'>
+                            <td>
+                                <a href= "{% url 'invoice_edit' invoice.id %}" class = 'fill-div'>
+                                    <button 
+                                        class='button_OpenInvoice' style='background-image:url({% static 'Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat;'>
+                                    </button>
+                                </a>
+                            </td>
+                            <td>{{ invoice.client.FName }}</td>
+                            <td>{{ invoice.client.LName }}</td>
+                            <td>{{ invoice.client.email }}</td>
+                            <td>{{ invoice.client }}</td> 
+                            <td>{{ invoice.client.phone_number }}</td>
+                            <td>{{ invoice.client.address_street }}</td>
+                            <td>{{ invoice.client.address_city }}</td>
+                            <td>{{ invoice.client.address_state }}</td>
+                            <td>{{ invoice.client.address_zip }}</td>
+                            <td>
+                                <a href= "{% url 'invoice_change_status' invoice.id %}"  class = 'fill-div'>
+                                    <button 
+                                        class='button_OpenInvoice'  style='background-image:url({% static '/add.svg' %}); background-position: center; background-repeat: no-repeat;' >
+                                    </button>
+                                </a>
+                            </td>
+
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <br><br><br><br>
+            <h2>Proposal</h2>
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Open Invoice</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Contact Name</th>
+                        <th>Phone Number</th>
+                        <th>Street Address</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Zip Code</th>
+                        <th>Actions<br><br><i>Change to Open</i></th>
+                    </tr>
+                </thead>     
+                         
+                <tbody>
+                    {% for invoice in invoices %}
+                    {% if invoice.status == 'Proposal' %}
+                        <tr class = 'invoice-row' id = '{{invoice.id}}'>
+                            <td>
+                                <a href= "{% url 'invoice_edit' invoice.id %}" class = 'fill-div'>
+                                    <button 
+                                        class='button_OpenInvoice' style='background-image:url({% static 'Open_In_New_Icon.svg' %});  background-position: center; background-repeat: no-repeat; '>
+                                    </button>
+                                </a>
+                            </td>
+                            <td>{{ invoice.client.FName }}</td>
+                            <td>{{ invoice.client.LName }}</td>
+                            <td>{{ invoice.client.email }}</td>
+                            <td>{{ invoice.client }}</td> 
+                            <td>{{ invoice.client.phone_number }}</td>
+                            <td>{{ invoice.client.address_street }}</td>
+                            <td>{{ invoice.client.address_city }}</td>
+                            <td>{{ invoice.client.address_state }}</td>
+                            <td>{{ invoice.client.address_zip }}</td>
+                            <td>
+                                <a href= "{% url 'invoice_change_status' invoice.id %}" class = 'fill-div'>
+                                    <button 
+                                        class='button_OpenInvoice' style='background-image:url({% static '/add.svg' %}); background-position: center; background-repeat: no-repeat; '>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        <br><br><br><br>
+        <h2>Open</h2>
+        <br>
+        <table>
+            <thead>
+                <tr>
+                    <th>Open Invoice</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Contact Name</th>
+                    <th>Phone Number</th>
+                    <th>Street Address</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Zip Code</th>
+                    <th>Actions<br><br><i>Change to Closed</i></th>
+                </tr>
+            </thead>     
+                     
+            <tbody>
+                {% for invoice in invoices %}
+                {% if invoice.status == 'Open' %}
+                    <tr class = 'invoice-row' id = '{{invoice.id}}'>
+                        <td>
+                            <a href= "{% url 'invoice_edit' invoice.id %}" class = 'fill-div'>
+                                <button 
+                                    class='button_OpenInvoice' style='background-image:url({% static '/Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat; '>
+                                </button>
+                            </a>
+                        </td>
+                        <td>{{ invoice.client.FName }}</td>
+                        <td>{{ invoice.client.LName }}</td>
+                        <td>{{ invoice.client.email }}</td>
+                        <td>{{ invoice.client }}</td>
+                        <td>{{ invoice.client.phone_number }}</td>
+                        <td>{{ invoice.client.address_street }}</td>
+                        <td>{{ invoice.client.address_city }}</td>
+                        <td>{{ invoice.client.address_state }}</td>
+                        <td>{{ invoice.client.address_zip }}</td>
+                        <td>
+                            <a href= "{% url 'invoice_change_status' invoice.id %}" class = 'fill-div'>
+                                <button 
+                                    class='button_OpenInvoice' style='background-image:url({% static '/add.svg' %}); background-position: center; background-repeat: no-repeat; '>
+                                </button>
+                            </a>
+                        </td>
+
+                    </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+    <br><br><br><br>
+    <h2>Closed</h2>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th>Open Invoice</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Contact Name</th>
+                <th>Phone Number</th>
+                <th>Street Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip Code</th>
+            </tr>
+        </thead>     
+                 
+        <tbody>
+            {% for invoice in invoices %}
+            {% if invoice.status == 'Closed' %}
+                <tr class = 'invoice-row' id = '{{invoice.id}}'>
+                    <td>
+                        <a href= "{% url 'invoice_edit' invoice.id %}" class = 'fill-div'>
+                            <button 
+                                class='button_OpenInvoice' style='background-image:url({% static '/Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat; '>
+                            </button>
+                        </a>
+                    </td>
+                    <td>{{ invoice.client.FName }}</td>
+                    <td>{{ invoice.client.LName }}</td>
+                    <td>{{ invoice.client.email }}</td>
+                    <td>{{ invoice.client }}</td>
+                    <td>{{ invoice.client.phone_number }}</td>
+                    <td>{{ invoice.client.address_street }}</td>
+                    <td>{{ invoice.client.address_city }}</td>
+                    <td>{{ invoice.client.address_state }}</td>
+                    <td>{{ invoice.client.address_zip }}</td>
+
+                </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    document.querySelectorAll('.invoice-row').forEach(row => {
+        row.addEventListener('click', () => {
+            const invoiceID = row.getAttribute('id');
+            window.location.href = `/invoices/edit/${invoiceID}`;
+        });
+    });
+</script>
+
+
+
+<script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var searchQuery = urlParams.get('search');
+    if (searchQuery) {
+        var invoicesListUrl = "{% url 'invoice_page' %}";
+
+        var backToInvoicesLink = document.createElement('a');
+        backToInvoicesLink.href = invoicesListUrl;
+        backToInvoicesLink.textContent = "Back to Invoices";
+        backToInvoicesLink.classList.add("link-button");
+        
+        var form = document.getElementById('invoice-search-form');
+        form.parentNode.insertBefore(backToInvoicesLink, form);
+
+    }
+
+    document.getElementById('invoice-search-form').addEventListener('submit', function(event) {
+        event.preventDefault();         
+        this.submit();
+    });
+</script>
+<script type="text/javascript">
+    window.onload = function() {
+        if (typeof messages !== 'undefined' && messages.length > 0) {
+            // Display the first message's text in an alert box
+            alert(messages[0].text);
+        }
+    };
+</script>
+{% endblock %}    
+
+
+
+

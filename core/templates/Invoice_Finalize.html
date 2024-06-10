@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Invoice</title>
+    <style>
+        h3{
+            text-align: center;
+        }
+        .link-button_confirm {
+            display: inline-block;
+            padding: 5px 10px; 
+            background-color: #f0f0f0; 
+            color: #000; 
+            text-decoration: none;
+            border-radius: 4px; 
+            box-shadow: 1px 3px #000000;
+        }
+        .link-button_confirm:hover{
+            background-color: #006d15;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'invoice_edit' data.invoice_all.id %}" class='link-button'>Return to Invoice Edit Page for Invoice ID: {{data.invoice_all.id}} </a> <br>
+
+    
+    <h1>Client Contact Information</h1>
+    <div style = 'width: 50%; margin: 0 auto;'>
+        <table>
+            <tbody>
+                <tr> 
+                    <td>Client Name:</td>
+                    <td>{{data.invoice_all.client}}</td>
+                </tr>
+                <tr> 
+                    <td>Client Email:</td>
+                    <td>{{data.invoice_all.client.email}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <br><br>
+    <div>
+        <div style = 'display:inline-block; padding-right: 30px; '>
+            <h3>Job Information</h3>
+            <table >
+                <tbody>
+                    <tr> 
+                        <td>Job POC:</td>
+                        <td>{{data.ship_to_name}}</td>
+                    </tr>
+                    <tr> 
+                        <td>Job Address:</td>
+                        <td>{{data.ship_to_address}}</td>
+                    </tr>
+                    <tr> 
+                        <td>Job City:</td>
+                        <td>{{data.ship_to_city}}</td>
+                    </tr>
+                    <tr> 
+                        <td>Job State:</td>
+                        <td>{{data.ship_to_state}}</td>
+                    </tr>
+                    <tr> 
+                        <td>Job Zip:</td>
+                        <td>{{data.ship_to_zip}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style = 'display:inline-block; padding-right: 30px;'>
+            <h3>Billing Information</h3>
+            <table>
+                <tbody>
+                    <tr> 
+                        <td>Billing Name:</td>
+                        <td>{{data.bill_to_name}}</td>
+                    </tr>
+                    <tr> 
+                        <td>Billing Address:</td>
+                        <td>{{data.bill_to_address}}</td>
+                    </tr>
+                    <tr> 
+                        <td>Billing City:</td>
+                        <td>{{data.bill_to_city}}</td>
+                    </tr>
+                    <tr> 
+                        <td>Billing State:</td>
+                        <td>{{data.bill_to_state}}</td>
+                    </tr>
+                    <tr> 
+                        <td>Billing Zip:</td>
+                        <td>{{data.bill_to_zip}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+
+        <div style = 'display:inline-block;'>
+            <h3>Invoice Information</h3>
+            <div style = 'width: 35%;'>
+                <table id="invoice-info-table">
+                    <tbody>
+                        <tr> 
+                            <td>Invoice ID:</td>
+                            <td>{{data.invoice_all.id}}</td>
+                        </tr>
+                        <tr> 
+                            <td>Terms:</td>
+                            <td>{{data.Static_User_Info.invoice_terms}}</td>
+                        </tr>
+                        <tr id="current-date-row">
+                            <td> Date:</td>
+                            <td id="current-date"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <br><br><br><br>
+
+
+
+    <h3>Line Items</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, value in data.Item_Dict.items%}
+                
+                <tr>
+                    <td style = 'text-align: center;'> {{key}} </td>
+                    <td style = 'text-align: center;'> {{value.description}} </td>
+                    <td style = 'text-align: center;'> {{value.quantity}} </td>
+                    <td style = 'text-align: center;'> {{value.price}} </td>
+                    <td style = 'text-align: center;'> {{value.total}} </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <table style = 'width: 25%; margin-right: 0px; margin-left: auto;'>
+        <thead>
+            <tr>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                <td></td>
+                <td>Subtotal: {{data.subtotal}}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Tax: {{data.tax}}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Total: {{data.total}}</td>
+                
+            </tr>
+        </tfoot>
+    </table>
+
+
+    <br><br><br><br>
+    <div>
+        <div style='display:inline-block; padding-right: 30px; text-align: center;'>
+            <h2> View and Download PDF for Invoice {{data.invoice_all.id}} </h2>
+            <a href="{% url 'ViewPDF' data.invoice_all.id %}" class="link-button_confirm" target="_blank">Generate PDF for Invoice ID: {{data.invoice_all.id}} </a> <br>
+        </div>
+        <div style = 'display:inline-block; padding-right: 30px; text-align: center;'>
+            <h2> Confirm Invoice and Send Email </h2>
+            <form method = 'POST'>
+                {% csrf_token %}
+                <input type="submit" class = 'link-button_confirm' value = 'Send Email'onclick="return confirm('Are you sure?')" />
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    // Get the current date
+    var currentDate = new Date();
+    
+    // Format the date as desired (e.g., "MM/DD/YYYY")
+    var formattedDate = (currentDate.getMonth() + 1) + '/' + currentDate.getDate() + '/' + currentDate.getFullYear();
+
+    // Update the table row with the current date
+    document.getElementById('current-date').textContent = formattedDate;
+</script>
+</html>
+{%endblock%}

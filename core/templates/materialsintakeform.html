@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intake Material</title>
+</head>
+<body>
+    <h1>New Material Form</h1>
+    <a href="{% url 'materials_list' %}" class="New_Button""> Back to Materials</a>
+    <form id="material-form" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+
+    
+
+    <script>
+        document.getElementById('material-form').addEventListener('submit', function(event) {
+            // Prevent the form from submitting immediately
+            event.preventDefault();
+
+            // Get the material name from the form
+            var materialName = document.getElementById('id_item').value;
+
+            // Display the confirmation message
+            var confirmationMessage = materialName + " has been added.";
+            alert(confirmationMessage);
+
+            // Submit the form
+            this.submit();
+        });
+    </script>
+</body>
+{% endblock %}

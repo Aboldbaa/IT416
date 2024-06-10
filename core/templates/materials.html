@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materials</title>
+</head>
+<style>
+    td{
+        text-align:center;
+        background-color: #f0f0f0;
+        color: #000000;
+        border-bottom: 1px dashed black;
+    }
+    th{
+        border-left: 1px solid white;
+    }
+    th a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+    }
+    .button_OpenMaterial {
+        padding: 15px 15px;
+        font-size: 15px;
+    }
+</style>
+<body>
+    <h1>Materials List </h1>
+    <div style='display: flex; justify-content: space-around;'>
+        <a href="{% url 'intake_material' %}"><button class='New_Button' text-align="left" ><h3> Add New Material </h3></button></a>    
+    </div>
+    <br>
+    <br>
+    <form id="filter-form" method="get" action="{% url 'materials_list' %}">
+        <input type="text" name="search" placeholder="Search...">
+        <button type="submit">Search</button>
+    </form>
+    <br>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th> Open Material</th>
+                <th><a href="?sort=item">
+                    Item
+                    {% if request.session.last_sort_column == "item" %}
+                    {% if request.session.current_sort_order == "asc" %}
+                        ▲
+                    {% else %}
+                        ▼
+                    {% endif %}
+                    {% endif %}
+                    </a>
+                </th>
+                <th><a href="?sort=description">
+                    Description
+                    {% if request.session.last_sort_column == "description" %}
+                    {% if request.session.current_sort_order == "asc" %}
+                        ▲
+                    {% else %}
+                        ▼
+                    {% endif %}
+                    {% endif %}
+                    </a>
+                </th>
+                <th><a href="?sort=price">
+                    Price
+                    {% if request.session.last_sort_column == "price" %}
+                    {% if request.session.current_sort_order == "asc" %}
+                        ▲
+                    {% else %}
+                        ▼
+                    {% endif %}
+                    {% endif %}
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in materials %}
+            <tr id="material-{{ material.id }}" class="material-row">
+                <td>
+                    <a href="{% url 'materials_edit' material.id %}" class="fill-div">
+                        <button class="button_OpenMaterial" style="background-image: url({% static '/Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat; background-size: contain;">
+                        </button>
+                    </a>
+                </td>
+                <td>{{ material.item }}</td>
+                <td>{{ material.description }}</td>
+                <td>{{ material.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        // Check if the search query exists in the URL parameters
+        var urlParams = new URLSearchParams(window.location.search);
+        var searchQuery = urlParams.get('search');
+        if (searchQuery) {
+            // Construct the URL for the materials list page
+            var materialsListUrl = "{% url 'materials_list' %}";
+            
+            // Create the "Back to Materials" link
+            var backToMaterialsLink = document.createElement('a');
+            backToMaterialsLink.href = materialsListUrl;
+            backToMaterialsLink.textContent = "Back to Materials";
+            backToMaterialsLink.classList.add("New_Button");
+            
+            // Insert the link above the search bar
+            var form = document.getElementById('filter-form');
+            form.parentNode.insertBefore(backToMaterialsLink, form);
+
+        }
+
+        document.getElementById('filter-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            // Submit the form
+            this.submit();
+        });
+    </script>
+</body>
+{% endblock %}

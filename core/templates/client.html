@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<!--Style for the client table-->
+<style>
+    td{
+        text-align:center;
+        background-color: #f0f0f0;
+        color: #000000;
+        border-bottom: 1px dashed black;
+    }
+    th{
+        border-left: 1px solid white;
+    }
+    th a{
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+    }
+    .button_OpenClient{
+        padding: 15px 15px;
+        font-size: 15px;
+    }
+</style>
+
+<div class="container">
+    <h1>Clients</h1>
+    <div style='display: flex; justify-content: space-around;'>
+        <a href="{% url 'client_onboarding' %}"><button class='Option_Button' text-align="left"><h3>Add New Client</h3></button></a>    
+    </div>
+
+    {% if request.GET.search %}
+        <a href="{% url 'client_list' %}" class="New_Button">Back to Clients</a>
+    {% endif %}
+
+    <form id="filter-form" method="get" action="{% url 'client_list' %}">
+        <input type="text" id="search-input" name="search" placeholder="Search...">
+        <button type="submit">Search</button>
+    </form>  
+
+    <br> 
+    <br> 
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Open Client</th>
+                <th>
+                    <a href="?sort=FName">
+                        First Name
+                        {% if request.session.last_sort_column == "FName" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=LName">
+                        Last Name
+                        {% if request.session.last_sort_column == "LName" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=email">
+                        Email
+                        {% if request.session.last_sort_column == "email" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=contact_name">
+                        Contact Name
+                        {% if request.session.last_sort_column == "contact_name" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=phone_number">
+                        Phone Number
+                        {% if request.session.last_sort_column == "phone_number" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=address_street">
+                        Street Address
+                        {% if request.session.last_sort_column == "address_street" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=address_city">
+                        City
+                        {% if request.session.last_sort_column == "address_city" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=address_state">
+                        State
+                        {% if request.session.last_sort_column == "address_state" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=address_zip">
+                        Zip Code
+                        {% if request.session.last_sort_column == "address_zip" %}
+                        {% if request.session.current_sort_order == "asc" %}
+                            ▲
+                        {% else %}
+                            ▼
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+            </tr>
+        </thead>     
+                 
+        <tbody>
+            {% for client in clients %}
+                <tr class="client-row" id="{{ client.id }}">
+                    <td>
+                        <a href="{% url 'client_edit' client.id %}" class="fill-div">
+                            <button class="button_OpenClient" style="background-image: url({% static '/Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat; background-size: contain;">
+                            </button>
+                        </a>
+                    </td>
+                    <td>{{ client.FName }}</td>
+                    <td>{{ client.LName }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>{{ client.contact_name }}</td>
+                    <td>{{ client.phone_number }}</td>
+                    <td>{{ client.address_street }}</td>
+                    <td>{{ client.address_city }}</td>
+                    <td>{{ client.address_state }}</td>
+                    <td>{{ client.address_zip }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.querySelectorAll('.client-row').forEach(row => {
+        row.addEventListener('click', () => {
+            const clientId = row.getAttribute('id');
+            window.location.href = `/clients/${clientId}/edit/`;
+        });
+    });
+</script>
+{% endblock %}

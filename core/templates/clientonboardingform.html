@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>New Client Form</h1>
+    <a href="{% url 'client_list' %}" class="New_Button">Back to Clients</a>
+
+    <form method="POST" id="client-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        document.getElementById('client-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting immediately
+
+            // Get the client's first name and last name from the form
+            var firstName = document.getElementById('id_FName').value;
+            var lastName = document.getElementById('id_LName').value;
+
+            // Display the confirmation message with the client's name
+            var confirmationMessage = firstName + " " + lastName + " has been added.";
+            alert(confirmationMessage);
+
+            // Submit the form
+            var form = this;
+            fetch(form.action, {
+                method: form.method,
+                body: new FormData(form)
+            }).then(function(response) {
+                if (response.ok) {
+                    // Redirect to the clients.html page after successful form submission
+                    window.location.href = "{% url 'client_list' %}";
+                } else {
+                    // Handle errors if needed
+                    console.error('Error:', response.statusText);
+                }
+            }).catch(function(error) {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+{% endblock %}

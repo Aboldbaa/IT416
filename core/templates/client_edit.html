@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Edit Client</h1>
+        <a href="{% url 'client_list' %}" class="New_Button"> Back to Clients</a>
+        <br> 
+        <br> 
+        <form id="client-form" method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td><label for="FName">First Name:</label></td>
+                    <td><input type="text" id="FName" name="FName" value="{{ client.FName }}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="LName">Last Name:</label></td>
+                    <td><input type="text" id="LName" name="LName" value="{{ client.LName }}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="email">Email:</label></td>
+                    <td><input type="email" id="email" name="email" value="{{ client.email }}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="contact_name">Contact Name:</label></td>
+                    <td><input type="text" id="contact_name" name="contact_name" value="{{ client.contact_name }}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="phone_number">Phone Number:</label></td>
+                    <td><input type="text" id="phone_number" name="phone_number" value="{{ client.phone_number }}"></td>
+                </tr>
+                <tr>
+                    <td><label for="address_street">Street Address:</label></td>
+                    <td><input type="text" id="address_street" name="address_street" value="{{ client.address_street }}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="address_city">City:</label></td>
+                    <td><input type="text" id="address_city" name="address_city" value="{{ client.address_city }}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="address_state">State:</label></td>
+                    <td><input type="text" id="address_state" name="address_state" value="{{ client.address_state }}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="address_zip">ZIP Code:</label></td>
+                    <td><input type="text" id="address_zip" name="address_zip" value="{{ client.address_zip }}"></td>
+                </tr>
+            </table>
+            <br> 
+            <br> 
+            <button type="submit" name="update" onclick="return confirm('Are you sure you want to make these changes?')">Update</button>
+            <button type="submit" name="delete" id="delete-button">Delete</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('delete-button').addEventListener('click', function(event) {
+            if (!confirm('Are you sure you want to delete {{ client.FName }} {{ client.LName }}?')) {
+                event.preventDefault();
+            } else {
+                document.getElementById('client-form').setAttribute('delete-clicked', 'true');
+            }
+        });
+
+        document.getElementById('client-form').addEventListener('submit', function(event) {
+            var deleteClicked = this.getAttribute('delete-clicked');
+            if (deleteClicked === 'true') {
+                var firstName = document.getElementById('FName').value;
+                var lastName = document.getElementById('LName').value;
+                alert(firstName + ' ' + lastName + ' has been deleted.');
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<script type="text/javascript">
+var messages = [
+    {% for message in messages %}
+    {"level": "{{ message.level_tag }}", "text": "{{ message|escapejs }}" }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+</script>
+{% endif %}
+
+
+<!--Style for the home table-->
+<style>
+
+    #ClientURL a:link {
+        color: black; 
+        background-color: transparent;
+    }
+
+    #ClientURL a:visited {
+        color: black; 
+        background-color: transparent; 
+    }
+
+    table{
+        border-color: 1px solid white;
+        border-left: 1px solid white;
+        color: white; 
+        
+    }
+
+    td{
+        text-align:center;
+        background-color: #f0f0f0;
+        color: #000000;
+        vertical-align: top;
+        border-bottom: 1px dashed black;
+    }
+    th{
+        border-left: 1px solid white;
+    }
+    a{
+        color: #000000;
+    }
+    a:visited{
+        color: #000000;
+    }
+    a:hover{
+        color: #000000;
+    }
+</style>
+<br>
+    <div class="container">
+        <form id="filter-form" method="get" action="{% url 'index' %}">
+            <input type="text" name="search" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+
+        <br>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <th>Drafts</th>
+                <th>Proposals</th>
+                <th>Open Invoices</th>
+            </tr>
+            
+            <tr >
+                
+                
+                <td>
+                    {% for invoice in invoices %}
+                        {% if invoice.status == 'Draft' %}
+                           <a href="{% url 'invoice_edit' invoice.id %}"> {{ invoice.id }} - {{ invoice.client }}</a><br><hr><br>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                
+
+                
+                <td>
+                    {% for invoice in invoices %}
+                        {% if invoice.status == 'Proposal' %}
+                        <a href="{% url 'invoice_edit' invoice.id %}">{{ invoice.id }} - {{ invoice.client }}</a><br><hr><br>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                
+
+                
+                <td>
+                    {% for invoice in invoices %}
+                        {% if invoice.status == 'Open' %}
+                        <a href="{% url 'invoice_edit' invoice.id %}">{{ invoice.id }} - {{ invoice.client }}</a><br><hr><br>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                
+                
+            </tr>
+            
+        </table>
+    </div>
+    <script>
+        // Check if the search query exists in the URL parameters
+        var urlParams = new URLSearchParams(window.location.search);
+        var searchQuery = urlParams.get('search');
+        if (searchQuery) {
+            // Construct the URL for the home page
+            var homeUrl = "{% url 'index' %}";
+            
+            // Create the "Back to Home" link
+            var backToHomeLink = document.createElement('a');
+            backToHomeLink.href = homeUrl;
+            backToHomeLink.textContent = "Back to Home";
+            backToHomeLink.classList.add("New_Button");
+            
+            // Insert the link above the search bar
+            var form = document.getElementById('filter-form');
+            form.parentNode.insertBefore(backToHomeLink, form);
+    
+        }
+    
+        document.getElementById('filter-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            // Submit the form
+            this.submit();
+        });
+    </script>
+    <script type="text/javascript">
+        window.onload = function() {
+            if (typeof messages !== 'undefined' && messages.length > 0) {
+                // Display the first message's text in an alert box
+                alert(messages[0].text);
+            }
+        };
+    </script>
+{% endblock %}
