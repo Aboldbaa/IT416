@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <style>
+       table {
+            border-collapse: collapse;
+            width: 100%; 
+            background-color: rgb(5, 49, 77);
+            border: 1px solid white; 
+        }
+
+        th, td {
+            padding: 14px; 
+            text-align: left; 
+            border: 1px solid white; /* Add border for each cell */
+            font-size: 14px;
+            width: calc(100% / 7); /* Set width for each cell to 1/7 of the table width */
+        }
+
+        th {
+            text-align: center; 
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <h1>{{ current_month }} {{ current_year }}</h1>
+    <a href="{{ previous_month_url }}" class="NavBar">Previous Month</a>
+    <!-- Link to the next month -->
+    <a href="{{ next_month_url }}" class="NavBar" style="float: right;">Next Month</a>
+    <p> </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in month_calendar %}
+                <tr>
+                    {% for day in week %}
+                        <td>{{ day }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+    
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materials</title>
+</head>
+<body>
+    <h1> <a href="{% url 'materials_list' %}">Materials List </a></h1>
+    <a href="{% url 'intake_material' %}">Add New Material</a>
+    <br> 
+    <br> 
+    <form id="filter-form" method="get" action="{% url 'materials_list' %}">
+        <input type="text" name="search" placeholder="Search...">
+        <button type="submit">Search</button>
+    </form>
+    <!--Start of edit-->
+    {% if materials %}
+    <br>
+    <br> 
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Description</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in materials %}
+            <tr>
+                <td>{{ material.item }}</td>
+                <td>{{ material.description }}</td>
+                <td>{{ material.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif request.GET.search %}
+    <!-- No materials found message -->
+    <p>No materials found for "{{ request.GET.search }}".</p>
+    <p>Would you like to add a new material?</p>
+    <form action="{% url 'intake_material' %}" method="get">
+        <button type="submit">Yes</button>
+    </form>
+    <form action="{% url 'materials_list' %}" method="get">
+        <button type="submit">No</button>
+    </form>
+    {% else %}
+    <!-- Default display when no search is performed -->
+    <p>Please enter a search query to find materials.</p>
+    {% endif %}
+    <!--End of edit-->
+</body>
+    
+{% endblock %}

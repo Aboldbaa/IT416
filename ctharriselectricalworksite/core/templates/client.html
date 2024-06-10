@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+    <!--Style for the client table-->
+    <style>
+        td{
+            text-align:center;
+            background-color: #f0f0f0;
+            color: #000000;
+
+            border-bottom: 1px dashed black;
+        }
+        th{
+            border-left: 1px solid white;
+        }
+    </style>
+
+    <div class="container">
+        {% if 'search' in request.GET %}
+            <a href="{% url 'index' %}">Back to Home Page</a>
+        {% endif %}
+        <form id="filter-form" method="get" action="{% url 'index' %}">
+            <input type="text" name="search" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+        <br> 
+        <br> 
+        <a href="{% url 'client_onboarding' %}" class='NavBar'>Add New Client</a>
+        <br>
+        <br>
+        <table>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Contact Name</th>
+                    <th>Phone Number</th>
+                    <th>Street Address</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Zip Code</th>
+                </tr>
+            </thead>     
+                     
+            <tbody>
+                {% for client in clients %}
+                    <tr>
+                        <td>{{ client.FName }}</td>
+                        <td>{{ client.LName }}</td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.contact_name }}</td>
+                        <td>{{ client.phone_number }}</td>
+                        <td>{{ client.address_street }}</td>
+                        <td>{{ client.address_city }}</td>
+                        <td>{{ client.address_state }}</td>
+                        <td>{{ client.address_zip }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}    

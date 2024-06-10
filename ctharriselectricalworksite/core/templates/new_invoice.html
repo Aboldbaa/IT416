@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block content %}
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Invoice Form</title>
+    </head>
+    
+    <body>
+        <h1>New Invoice</h1>
+    </body>
+
+    <style>
+        .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto;
+        background-color: rgb(0,0,0); 
+        background-color: rgba(0,0,0,0.4); 
+        }
+        
+
+        .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; 
+        }
+        
+        .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+        }
+
+        .modal_header{
+            background-color: rgb(05, 49, 77);
+            padding: 2px 15px;
+            text-align:center;
+        }
+    </style>
+
+
+
+    <div>
+        <button id= 'OpenModal_NewCustomer'><h3>Add New Client</h3></button>
+    </div>
+
+    <div id = 'New_Customer_Modal' class = 'modal'>
+        <div class='modal-content'>
+            <div class = 'modal_header'>
+                <span class="close">&times;</span>
+                <h2>Add New Client</h2>
+            </div>
+            <di class = 'modal_body'>
+                <form method="post" style="color:black;">
+                    {% csrf_token %}
+                    {{ NewCustomer.as_p }}
+                    
+                    <input type="submit" value="Add">
+                </form>
+            </div>
+    </div>
+
+
+    <form method="post">
+        {% csrf_token %}
+        {{ Invoice_Form.as_p }}
+        <fieldset>
+            <legend>Line Items</legend>
+            <div id="formset-container">
+                {{ Invoice_FormSet.management_form }}
+                {% for form in Invoice_FormSet %}
+                    <div class="inline-form">
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+        <button type="button" id="add-more">Add More</button>
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById("New_Customer_Modal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("OpenModal_NewCustomer");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on the button, open the modal
+        btn.onclick = function() {
+        modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+        modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+        }
+
+
+
+
+        document.getElementById('add-more').addEventListener('click', function() {
+            var totalForms = document.getElementById('id_invoicematerial_set-TOTAL_FORMS');//make sure to check for this(ctr+u) when doing dynamic stuff. sometimes the div id is a diff name
+            console.log(totalForms); 
+            var formNum = totalForms.value;
+            var newForm = document.querySelector('.inline-form').cloneNode(true);
+            newForm.innerHTML = newForm.innerHTML.replace(/-0-/g, '-' + formNum + '-');
+            document.getElementById('formset-container').appendChild(newForm);
+            totalForms.value = parseInt(formNum) + 1;
+        });
+
+    </script>
+
+    <br><br><br>
+</html>
+{% endblock %}

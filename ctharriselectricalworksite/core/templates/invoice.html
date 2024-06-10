@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Invoices</title>
+    </head>
+    <body>
+        <h1>Invoices</h1>
+{% comment %}
+            <form method="post">
+                {% csrf_token %}
+                {{ invoice_form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+{% endcomment %}
+    </body>
+    <br><br><br><br>
+    <div style='display: flex; justify-content: space-around;'>
+        <a href = "{% url 'proposal_form' %}"><button class='Option_Button' ><h3>Start Proposal</h3></button></a>
+        <a href = "{% url 'new_invoice' %}"><button class='Option_Button'><h3>Start Invoice</h3></button></a>    
+    </div>
+    <br><br><br><br>
+
+        <!--Style for the client table-->
+        <style>
+            td{
+                text-align:center;
+                background-color: #f0f0f0;
+                color: #000000;
+    
+                border-bottom: 1px dashed black;
+            }
+            th{
+                border-left: 1px solid white;
+            }
+
+ 
+
+
+            .button_OpenInvoice{
+                padding: 15px 15px;
+                font-size: 15px;
+            }
+            
+        </style>
+    
+        {% load static %} <!--Load static files for images-->
+            
+            <!--Display table for all customers in DB-->
+
+            <br><br><br><br>
+            <h2>Draft</h2>
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Open Invoice</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Contact Name</th>
+                        <th>Phone Number</th>
+                        <th>Street Address</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Zip Code</th>
+                    </tr>
+                </thead>     
+                         
+                <tbody>
+                    {% for invoice in invoices %}
+                    {% if invoice.status == 'Draft' %}
+                        <tr href="{% url 'invoice_edit' invoice.id %}">
+                            <td>
+                                <a href= "{% url 'invoice_edit' invoice.id %}" class = 'fill-div'>
+                                    <button 
+                                        class='button_OpenInvoice' style='background-image:url({% static '/Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat; '>
+                                    </button>
+                                </a>
+                            </td>
+                            <td>{{ invoice.client.FName }}</td>
+                            <td>{{ invoice.client.LName }}</td>
+                            <td>{{ invoice.client.email }}</td>
+                            <td>{{ invoice.client }}</td> 
+                            <td>{{ invoice.client.phone_number }}</td>
+                            <td>{{ invoice.client.address_street }}</td>
+                            <td>{{ invoice.client.address_city }}</td>
+                            <td>{{ invoice.client.address_state }}</td>
+                            <td>{{ invoice.client.address_zip }}</td>
+
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <br><br><br><br>
+            <h2>In-Progress</h2>
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Open Invoice</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Contact Name</th>
+                        <th>Phone Number</th>
+                        <th>Street Address</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Zip Code</th>
+                    </tr>
+                </thead>     
+                         
+                <tbody>
+                    {% for invoice in invoices %}
+                    {% if invoice.status == 'Proposal' %}
+                        <tr href="{% url 'invoice_edit' invoice.id %}">
+                            <td>
+                                <a href= "{% url 'invoice_edit' invoice.id %}" class = 'fill-div'>
+                                    <button 
+                                        class='button_OpenInvoice' style='background-image:url({% static '/Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat; '>
+                                    </button>
+                                </a>
+                            </td>
+                            <td>{{ invoice.client.FName }}</td>
+                            <td>{{ invoice.client.LName }}</td>
+                            <td>{{ invoice.client.email }}</td>
+                            <td>{{ invoice.client }}</td> 
+                            <td>{{ invoice.client.phone_number }}</td>
+                            <td>{{ invoice.client.address_street }}</td>
+                            <td>{{ invoice.client.address_city }}</td>
+                            <td>{{ invoice.client.address_state }}</td>
+                            <td>{{ invoice.client.address_zip }}</td>
+
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        <br><br><br><br>
+        <h2>Open</h2>
+        <br>
+        <table>
+            <thead>
+                <tr>
+                    <th>Open Invoice</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Contact Name</th>
+                    <th>Phone Number</th>
+                    <th>Street Address</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Zip Code</th>
+                </tr>
+            </thead>     
+                     
+            <tbody>
+                {% for invoice in invoices %}
+                {% if invoice.status == 'Open' %}
+                    <tr>
+                        <td>
+                            <a href= "{% url 'invoice_edit' invoice.id %}" class = 'fill-div'>
+                                <button 
+                                    class='button_OpenInvoice' style='background-image:url({% static '/Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat; '>
+                                </button>
+                            </a>
+                        </td>
+                        <td>{{ invoice.client.FName }}</td>
+                        <td>{{ invoice.client.LName }}</td>
+                        <td>{{ invoice.client.email }}</td>
+                        <td>{{ invoice.client }}</td>
+                        <td>{{ invoice.client.phone_number }}</td>
+                        <td>{{ invoice.client.address_street }}</td>
+                        <td>{{ invoice.client.address_city }}</td>
+                        <td>{{ invoice.client.address_state }}</td>
+                        <td>{{ invoice.client.address_zip }}</td>
+
+                    </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+    <br><br><br><br>
+    <h2>Closed</h2>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th>Open Invoice</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Contact Name</th>
+                <th>Phone Number</th>
+                <th>Street Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip Code</th>
+            </tr>
+        </thead>     
+                 
+        <tbody>
+            {% for invoice in invoices %}
+            {% if invoice.status == 'Closed' %}
+                <tr>
+                    <td>
+                        <a href= "{% url 'invoice_edit' invoice.id %}" class = 'fill-div'>
+                            <button 
+                                class='button_OpenInvoice' style='background-image:url({% static '/Open_In_New_Icon.svg' %}); background-position: center; background-repeat: no-repeat; '>
+                            </button>
+                        </a>
+                    </td>
+                    <td>{{ invoice.client.FName }}</td>
+                    <td>{{ invoice.client.LName }}</td>
+                    <td>{{ invoice.client.email }}</td>
+                    <td>{{ invoice.client }}</td>
+                    <td>{{ invoice.client.phone_number }}</td>
+                    <td>{{ invoice.client.address_street }}</td>
+                    <td>{{ invoice.client.address_city }}</td>
+                    <td>{{ invoice.client.address_state }}</td>
+                    <td>{{ invoice.client.address_zip }}</td>
+
+                </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    {% endblock %}    
+
+
+
+

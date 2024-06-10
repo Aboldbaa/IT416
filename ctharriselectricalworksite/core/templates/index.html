@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+<!--Style for the home table-->
+<style>
+
+    #ClientURL a:link {
+        color: black; 
+        background-color: transparent;
+    }
+
+    #ClientURL a:visited {
+        color: black; 
+        background-color: transparent; 
+    }
+
+    table{
+        border-color: 1px solid white;
+        border-left: 1px solid white;
+        
+    }
+
+    td{
+        text-align:center;
+        background-color: #f0f0f0;
+        color: #000000;
+        vertical-align: top;
+        border-bottom: 1px dashed black;
+    }
+    th{
+        border-left: 1px solid white;
+    }
+    a{
+        color: #000000;
+    }
+    a:visited{
+        color: #000000;
+    }
+    a:hover{
+        color: #000000;
+    }
+</style>
+
+    <div class="container">
+        {% if 'search' in request.GET %}
+            <div id="ClientURL"> <a href="{% url 'index' %}">Back to Home Page</a></div>
+        {% endif %}
+        <form id="filter-form" method="get" action="{% url 'index' %}">
+            <input type="text" name="search" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+
+        <br> <br> <br>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <th>Upcoming</th>
+                <th>In-Progress</th>
+                <th>Completed</th>
+            </tr>
+            
+            <tr >
+                
+                
+                <td>
+                    {% for invoice in invoices %}
+                        {% if invoice.status == 'Draft' %}
+                           <a href="{% url 'invoice_edit' invoice.id %}"> {{ invoice.id }} - {{ invoice.client }}</a><br><hr><br>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                
+
+                
+                <td>
+                    {% for invoice in invoices %}
+                        {% if invoice.status == 'Proposal' %}
+                        <a href="{% url 'invoice_edit' invoice.id %}">{{ invoice.id }} - {{ invoice.client }}</a><br><hr><br>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                
+
+                
+                <td>
+                    {% for invoice in invoices %}
+                        {% if invoice.status == 'Open' %}
+                        <a href="{% url 'invoice_edit' invoice.id %}">{{ invoice.id }} - {{ invoice.client }}</a><br><hr><br>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                
+                
+            </tr>
+            
+        </table>
+    </div>
+
+{% endblock %}

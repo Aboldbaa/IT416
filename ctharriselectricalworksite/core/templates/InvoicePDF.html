@@ -1,0 +1,151 @@
+{% block content %}
+<html>
+<head>
+    <title>Invoice</title>
+    <style>
+        .logo_img {
+            width: 300px;
+            height: 300px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            padding: 5px;
+            align-items: center;
+        }
+
+
+
+        .flex-container {
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flex-container_SpaceBetween {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table{
+            width: 100%;
+        }
+
+        th{
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+        td{
+            border-bottom: 1px solid black;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% load static %}
+    
+    
+    <div class = 'grid-container'>
+        <div style = "display: flex; justify-content: center; max-width: 300px;">
+            <img src="{% static '\C.T. Harris Logo.png' %}" alt="Company Logo" class = 'logo_img'>
+        </div>
+        <div style = "display: flex; justify-content: center;   text-align: center;">
+            <h1>C.T. Harris Electrical Services Inc.</h1>
+        </div>
+    </div>
+    
+    <br><br><br><br>
+
+    <!-- Customer Info -->
+    <div class = 'flex-container_SpaceBetween'>
+        <div style = ' '>
+            <h2>Billed To:</h2>
+            <p>{{ customer.client }}</p>
+            <p>{{ customer.client.phone_number }}</p>
+            <p>{{ customer.client.address_street }}, {{ customer.client.address_city }}, {{ customer.client.address_state }}, {{ customer.client.address_zip }}</p>
+        </div>
+
+        <div style = ' '>
+            <h2>Invoice No. {{ customer.id }}</h2>
+            {% now "j F Y" %}
+        </div>
+
+    </div>
+    <!-- End Customer Info -->
+
+    <br><br>
+    <hr>
+    <br><br>
+
+    <div class = 'flex-container'>
+        <table>
+            <thead>
+                <tr>
+                    <th width = '30%'>Item</th>
+                    <th width = '40%'>Description</th>
+                    <th width = '7%'>Quantity</th>
+                    <th width = '7%'>Price</th>
+                    <th width = '16%'>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> #12 THHN Wire </td>
+                    <td> #12 THHN Wire this is the desc </td>
+                    <td> 12 </td>
+                    <td> 5.00 </td>
+                    <td> 60.00 </td>
+                </tr>
+
+                <tr>
+                    <td> 1/2" Flex </td>
+                    <td> 1/2" Flex Greenfield </td>
+                    <td> 4 </td>
+                    <td> 43.00 </td>
+                    <td> 172.00 </td>
+                    
+                </tr>
+
+                <tr>
+                    <td> 4" Recess Light </td>
+                    <td> 4" Recess Light /Lamp </td>
+                    <td> 3 </td>
+                    <td> 58.00 </td>
+                    <td> 174.00 </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br><br><br><br>
+
+    <div>
+        <div class = 'flex-container_SpaceBetween'>
+            <div>
+                <h3>Notes:</h3>
+                <p>Thank you for your business. We appreciate your business and look forward to working with you again.</p>
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <td>Subtotal</td>
+                        <td>406.00</td>
+                    </tr>
+                    <tr>
+                        <td>Tax</td>
+                        <td>24.36</td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td>430.36</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+</body>
+</html>
+
+
+{% endblock %}
